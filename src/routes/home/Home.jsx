@@ -2,7 +2,7 @@ import  "react";
 import Navbar from "../../components/Navbar";
 import Banner from "../../components/Banner";
 import Homemovies from '../Homemovies/Homemovies'
-import MovieList from "../../MovieList/MovieList";
+
 
 
 function Home() {
@@ -11,7 +11,7 @@ function Home() {
       <Navbar />
       <Banner />
       <Homemovies/>
-      < MovieList />      
+           
       
       
     </>
