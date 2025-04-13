@@ -1,0 +1,113 @@
+
+import { useEffect, useState } from "react";
+
+const API_KEY = "fe8049154bb6f3014af71cb16eb2e095";
+
+const MovieList = () => {
+  const [movies, setMovies] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [selectedMovie, setSelectedMovie] = useState(null);
+
+  const fetchMovies = async (page) => {
+    try {
+      const today = new Date().toISOString().split('T')[0];
+      const res = await fetch(
+        `https://api.themoviedb.org/3/discover/movie?api_key=${API_KEY}&language=en-US&sort_by=release_date.asc&page=${page}&with_original_language=hi&primary_release_date.gte=${today}`
+      );
+      const data = await res.json();
+      setMovies(data.results);
+      setTotalPages(data.total_pages > 10 ? 10 : data.total_pages);
+    } catch (error) {
+      console.error("Error fetching movies:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchMovies(currentPage);
+  }, [currentPage]);
+
+  const handlePageClick = (page) => {
+    setCurrentPage(page);
+  };
+
+  return (
+    <div className="p-6 px-4"> {/* Add px-4 here to create left and right gap */}
+      <h1 className="text-2xl font-bold mb-4 text-center">
+         Upcoming -  Movies (Page {currentPage})
+      </h1>
+
+      <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-4 mb-8">
+        {movies.map((movie) => (
+          <div
+            key={movie.id}
+            onClick={() => setSelectedMovie(movie)}
+            className="cursor-pointer bg-white rounded-xl shadow hover:shadow-lg p-2 transition-all duration-300 w-40"
+          >
+            <img
+              src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
+              alt={movie.title}
+              className="w-full h-40 object-cover rounded"
+            />
+            <h2 className="mt-2 text-sm font-semibold truncate">
+              {movie.title}
+            </h2>
+            <p className="text-xs text-gray-500 truncate">
+              {movie.release_date} | {movie.vote_average}⭐
+            </p>
+          </div>
+        ))}
+      </div>
+
+      {/* Modal */}
+      {selectedMovie && (
+        <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded-lg w-full max-w-md relative">
+            <button
+              className="absolute top-2 right-2 text-xl font-bold text-gray-600 hover:text-red-500"
+              onClick={() => setSelectedMovie(null)}
+            >
+              ×
+            </button>
+            <img
+              src={`https://image.tmdb.org/t/p/w500${selectedMovie.poster_path}`}
+              alt={selectedMovie.title}
+              className="w-full h-80 object-cover rounded mb-4"
+            />
+            <h2 className="text-xl font-bold">{selectedMovie.title}</h2>
+            <p className="text-sm text-gray-600 mb-1">
+              Release Date: {selectedMovie.release_date}
+            </p>
+            <p className="text-sm text-gray-600 mb-1">
+              Rating: {selectedMovie.vote_average}⭐
+            </p>
+            <p className="text-sm text-gray-800 mt-2">{selectedMovie.overview}</p>
+          </div>
+        </div>
+      )}
+
+      {/* Pagination */}
+      <div className="flex justify-center flex-wrap gap-2 mt-4">
+        {[...Array(totalPages).keys()].map((num) => {
+          const pageNum = num + 1;
+          return (
+            <button
+              key={pageNum}
+              onClick={() => handlePageClick(pageNum)}
+              className={`px-4 py-2 rounded ${
+                currentPage === pageNum
+                  ? "bg-blue-600 text-white"
+                  : "bg-gray-200 text-gray-800 hover:bg-gray-300"
+              }`}
+            >
+              {pageNum}
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
+};
+
+
+export default MovieList;
