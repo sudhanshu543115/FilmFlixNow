@@ -13,7 +13,7 @@ function Homemovies() {
     const getMovie = async () => {
       try {
        // const res = await axios.get("http://localhost:4004/Movie");
-       const res = await axios.get("https://backend-n5by.onrender.com/Movie");
+       const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/Movie`);
         console.log(res.data);
   
         // Sort movies by release_date in descending order
