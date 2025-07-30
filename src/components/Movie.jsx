@@ -12,7 +12,7 @@ function Movie() {
   useEffect(() => {
     const getMovies = async () => {
       try {
-        const res = await axios.get("https://backend-n5by.onrender.com/Movie");
+        const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/Movie`);
         console.log(res.data);
 
         // Sort movies by release_date in descending order (newest first)
